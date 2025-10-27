@@ -1,0 +1,1466 @@
+/* =================================== */
+/* === PHẦN 1: TỪ KHUNG GỐC (LAYOUT) === */
+/* =================================== */
+:root {
+  --primary-bg: #f4f6f8;
+  --secondary-bg: #ffffff;
+  --header-bg: #0D47A1;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --accent-color: #00BCD4;
+  --border-color: #e5e7eb;
+  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
+  --font-main: 'Inter', sans-serif;
+  --font-code: 'Roboto Mono', 'Courier New', Courier, monospace;
+  --header-height: 65px;
+  --sidebar-left-width: 320px;
+  --sidebar-right-width: 500px;
+  --accent-color-light: rgba(0, 188, 212, 0.3);
+  font-size: 15px;
+}
+
+html[data-theme="dark"] {
+  --primary-bg: #111827;
+  --secondary-bg: #1f2937;
+  --header-bg: #1e3a8a;
+  --text-primary: #e5e7eb;
+  --text-secondary: #9ca3af;
+  --border-color: #374151;
+
+  --new-card-bg: #1f2937;
+  --new-card-border: #374151;
+  --new-text-primary: #e5e7eb;
+  --new-text-secondary: #9ca3af;
+  --new-code-bg: #2d2d2d;
+  --new-code-text: #ccc;
+  --new-tag-bg: #374151;
+  --new-tag-text: #e5e7eb;
+  --accent-color-light: rgba(0, 188, 212, 0.4);
+}
+
+html[data-theme="light"] {
+  --new-card-bg: #fff;
+  --new-card-border: #ddd;
+  --new-text-primary: #333;
+  --new-text-secondary: #555;
+  --new-code-bg: #2d2d2d; /* Giữ nền tối cho code block */
+  --new-code-text: #ccc; /* Giữ chữ sáng cho code block */
+  --new-tag-bg: #eee;
+  --new-tag-text: #333;
+}
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--primary-bg);
+  color: var(--text-primary);
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  background-color: var(--header-bg);
+  padding: 12px 24px;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: var(--shadow);
+  height: var(--header-height);
+  flex-shrink: 0;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: white;
+}
+
+.logo svg {
+  width: 28px;
+  height: 28px;
+  fill: var(--accent-color);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+}
+
+.lang-switcher button {
+  background: none;
+  border: none;
+  color: #a5d8ff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+
+.lang-switcher button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.lang-switcher button.active {
+  color: white;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+#theme-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: white;
+  padding: 5px;
+}
+
+#theme-toggle svg {
+  width: 22px;
+  height: 22px;
+  pointer-events: none;
+}
+
+.main-layout {
+  display: flex;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.sidebar {
+  flex-shrink: 0;
+  width: var(--sidebar-left-width);
+  height: calc(100vh - var(--header-height));
+  overflow-y: auto;
+  padding: 24px;
+  background-color: var(--primary-bg);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.main-content {
+  flex-grow: 1;
+  height: calc(100vh - var(--header-height));
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.right-sidebar {
+  flex-shrink: 0;
+  width: var(--sidebar-right-width);
+  height: calc(100vh - var(--header-height));
+  overflow: hidden; /* Quan trọng: Ngăn chính sidebar cuộn */
+  padding: 24px;
+  background-color: var(--primary-bg);
+  border-left: 1px solid var(--border-color);
+  display: flex; /* Đã có */
+  flex-direction: column; /* Đã có */
+}
+/* Widget playbook search là flex container cột, chiếm hết chiều cao */
+.right-sidebar .sidebar-widget.playbook-search-widget {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden; /* Vẫn ẩn overflow của widget chính */
+  /* Reset padding nếu cần để kiểm soát khoảng cách tốt hơn */
+  padding: 15px; /* Giảm nhẹ padding */
+}
+
+/* Header của widget - không co giãn */
+.playbook-search-widget .sidebar-widget-header {
+  flex-shrink: 0;
+  margin-bottom: 10px; /* Giảm margin */
+  padding-bottom: 10px; /* Thêm padding dưới */
+  border-bottom: 1px solid var(--border-color); /* Thêm đường kẻ */
+}
+
+/* Container chứa input search - không co giãn */
+.playbook-search-widget .search-container.playbook-search-container {
+  flex-shrink: 0;
+  position: relative; /* Giữ lại để định vị nút clear */
+  margin-bottom: 15px; /* Thêm khoảng cách dưới */
+}
+.right-sidebar .sidebar-widget {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.sidebar-widget {
+  background-color: var(--secondary-bg);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+.sidebar .sidebar-widget { /* Chỉ áp dụng cho sidebar trái */
+    flex-shrink: 0;
+}
+.sidebar-widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.sidebar-widget-header h3 {
+  color: var(--header-bg);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+#project-selector {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 10px;
+  background-color: var(--primary-bg);
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  font-size: 0.95rem;
+}
+#new-project-btn {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  background-color: var(--header-bg);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+#get-kali-ip {
+  background: none;
+  border: none;
+  padding: 6px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+#get-kali-ip:hover {
+  background-color: var(--primary-bg);
+}
+#get-kali-ip svg {
+  width: 18px;
+  height: 18px;
+  fill: var(--text-secondary);
+  pointer-events: none;
+}
+#my-kali-ip-display {
+  font-family: var(--font-code);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--accent-color);
+  padding: 8px;
+  border-radius: 6px;
+  background-color: var(--primary-bg);
+  border: 1px solid var(--border-color);
+  display: none;
+  word-break: break-all;
+}
+#targetListInput {
+  width: 100%;
+  height: 100px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  font-family: var(--font-code);
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+  background-color: var(--primary-bg);
+  color: var(--text-primary);
+  resize: vertical; /* Cho phép thay đổi chiều cao */
+}
+#targetSelectorContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 40vh;
+  overflow-y: auto;
+}
+#targetSelectorContainer label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+  font-size: 0.95rem;
+}
+#targetSelectorContainer label:hover {
+  border-color: var(--ip-color, var(--accent-color));
+}
+#targetSelectorContainer label.active {
+  border-left-color: var(--ip-color, var(--accent-color));
+  background-color: var(--primary-bg);
+}
+#targetSelectorContainer input[type="radio"] {
+  display: none;
+}
+#targetSelectorContainer label.active span {
+  font-weight: 600;
+  color: var(--header-bg);
+}
+.delete-ip-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: auto;
+  padding: 4px;
+  border-radius: 50%;
+}
+.delete-ip-btn:hover {
+  background-color: var(--border-color);
+}
+.delete-ip-btn svg {
+  width: 16px;
+  height: 16px;
+  fill: var(--text-secondary);
+  pointer-events: none;
+}
+
+.main-widget {
+  background-color: var(--secondary-bg);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  margin-bottom: 24px;
+  position: relative;
+}
+.main-widget.active {
+  border-top: 4px solid var(--ip-color, var(--accent-color));
+}
+.main-widget-content {
+  padding: 20px;
+}
+.search-widget {
+  display: flex;
+  gap: 12px; /* Tăng nhẹ khoảng cách */
+  padding: 15px 20px; /* Giảm padding dọc, giữ padding ngang */
+  align-items: center;
+  background-color: var(--secondary-bg); /* Đảm bảo có nền */
+  border-radius: 12px; /* Giữ bo góc */
+  box-shadow: var(--shadow); /* Giữ đổ bóng */
+  margin-bottom: 24px; /* Giữ khoảng cách dưới */
+}
+
+/* Tìm đến .search-container (khoảng dòng 196) và cập nhật/thêm */
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Tìm đến #searchInput (khoảng dòng 920) và cập nhật */
+#searchInput {
+  width: 100%;
+  padding: 10px 35px 10px 15px; /* Giảm padding dọc, thêm padding phải cho nút clear */
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem; /* Giảm cỡ chữ */
+  color: var(--text-primary);
+  background-color: var(--secondary-bg);
+  outline: none;
+  transition: border-color 0.2s ease; /* Chỉ transition border */
+}
+#searchInput:focus {
+    border-color: var(--accent-color); /* Highlight border khi focus */
+}
+.nav-button {
+  padding: 10px 15px; /* Giảm padding */
+  border: 1px solid var(--border-color); /* Thêm border mặc định */
+  background-color: var(--primary-bg);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem; /* Giảm cỡ chữ */
+  transition: all 0.2s ease;
+  white-space: nowrap; /* Ngăn text xuống dòng */
+}
+.nav-button:hover {
+  color: var(--text-primary);
+  background-color: var(--border-color); /* Thêm hover background */
+  border-color: var(--border-color);
+}
+
+/* Tìm đến .nav-button.active (khoảng dòng 229) và cập nhật */
+.nav-button.active {
+  background-color: var(--header-bg);
+  color: white;
+  border-color: var(--header-bg); /* Border cùng màu nền */
+  /* Xóa các thuộc tính không cần thiết kế thừa từ .nav-button */
+  /* width, cursor, font-weight, font-size */
+}
+.nav-button.active:hover {
+    background-color: var(--header-bg); /* Giữ màu nền khi hover */
+    opacity: 0.9; /* Giảm độ sáng nhẹ khi hover */
+}
+
+/* Xóa đường kẻ xanh lá (nếu có - thường là outline focus) */
+#searchInput:focus,
+#playbook-search-input:focus {
+    outline: none; /* Xóa outline mặc định */
+    box-shadow: 0 0 0 2px var(--accent-color-light); /* Thay bằng box-shadow nhẹ (cần định nghĩa --accent-color-light) */
+    /* Hoặc chỉ cần border: */
+    /* border-color: var(--accent-color); */
+}
+.nav-button {
+  padding: 12px 18px;
+  border: 2px solid transparent;
+  background-color: var(--primary-bg);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+.nav-button:hover {
+  color: var(--text-primary);
+}
+.nav-button.active {
+  background-color: var(--secondary-bg);
+  color: var(--header-bg);
+  border-color: var(--header-bg);
+}
+#download-note-btn {
+  background: none;
+  border: none;
+  padding: 6px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+#download-note-btn:hover {
+  background-color: var(--primary-bg);
+}
+#download-note-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: var(--text-secondary);
+  pointer-events: none;
+}
+html[data-theme="dark"] .CodeMirror {
+  background: #1a1a1a;
+}
+html[data-theme="dark"] .cm-s-material-darker.CodeMirror {
+  background-color: #1a1a1a; /* Đảm bảo theme tối ăn đúng nền */
+}
+
+
+/* === SỬA LỖI & TINH CHỈNH CSS PLAYBOOK === */
+.playbook-card {
+  border-top: 3px solid var(--accent-color); /* Giảm độ dày border */
+  margin-bottom: 20px;
+  background-color: var(--secondary-bg);
+  border-radius: 8px; /* Giảm bo góc */
+  box-shadow: var(--shadow);
+}
+.playbook-card-content {
+  padding: 15px 20px; /* Giảm padding */
+}
+.playbook-card h4 {
+  font-size: 1.05rem; /* Giảm cỡ chữ */
+  margin-bottom: 12px;
+  color: var(--header-bg);
+}
+.playbook-card ol {
+  padding-left: 25px; /* Tăng thụt lề */
+  margin-top: 5px; /* Thêm khoảng cách trên */
+}
+.playbook-card li {
+  margin-bottom: 15px; /* Giữ khoảng cách giữa các bước */
+}
+.playbook-card li p {
+  font-size: 0.92rem; /* Tăng nhẹ cỡ chữ mô tả bước */
+  font-weight: 500; /* Giảm nhẹ độ đậm */
+  margin-bottom: 8px; /* Tăng khoảng cách dưới mô tả */
+  line-height: 1.5; /* Cải thiện khả năng đọc */
+}
+.playbook-card li p em { /* Style cho phần ghi chú (notes) */
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+.playbook-card pre { /* Style riêng cho code block trong playbook */
+    margin-top: 5px !important; /* Giảm khoảng cách trên */
+    margin-bottom: 10px !important; /* Giữ khoảng cách dưới */
+    font-size: 0.88rem; /* Tăng nhẹ cỡ chữ code */
+}
+.playbook-tags {
+  margin-top: 15px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  border-top: 1px solid var(--border-color); /* Thêm đường kẻ trên */
+  padding-top: 10px; /* Thêm padding trên */
+}
+.playbook-tag {
+  font-size: 0.75rem;
+  background-color: var(--primary-bg);
+  color: var(--text-secondary);
+  padding: 2px 8px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color); /* Thêm border nhẹ */
+}
+/* === KẾT THÚC SỬA CSS PLAYBOOK === */
+
+
+mark {
+  background-color: transparent;
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--accent-color);
+  text-decoration-thickness: 2px;
+}
+
+@media (max-width: 1400px) {
+  :root {
+    --sidebar-right-width: 352px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .main-layout {
+    flex-direction: column;
+    overflow-y: auto;
+    height: auto;
+  }
+  .sidebar,
+  .main-content,
+  .right-sidebar {
+    width: 100%;
+    height: auto;
+    overflow-y: visible;
+    border: none;
+    padding: 12px;
+  }
+  .right-sidebar .sidebar-widget {
+    position: static;
+    height: auto;
+  }
+  #playbook-results {
+    overflow-y: visible;
+  }
+}
+
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    gap: 8px;
+    height: auto;
+  }
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* ================================================= */
+/* === PHẦN 2: TỪ CSS MỚI BẠN CUNG CẤP (RESULTS) === */
+/* ================================================= */
+
+body {
+  font-family: var(--font-main);
+  margin: 0;
+  background-color: var(--primary-bg);
+}
+
+#searchInput {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 0; /* Xóa margin bottom vì nó nằm trong widget có padding */
+  border: 1px solid var(--border-color);
+  border-radius: 8px; /* Tăng bo góc */
+  box-sizing: border-box;
+  font-size: 1rem; /* Giảm nhẹ cỡ chữ */
+  background-color: var(--secondary-bg);
+  color: var(--text-primary);
+}
+
+#results {
+  /* margin-top: 15px; */ /* Xóa margin top vì nó nằm trong main content có padding */
+}
+
+.result-card {
+  background-color: var(--new-card-bg);
+  border: 1px solid var(--new-card-border);
+  border-radius: 8px; /* Tăng bo góc */
+  padding: 15px 20px; /* Tăng padding */
+  margin-bottom: 16px; /* Tăng khoảng cách */
+  box-shadow: var(--shadow); /* Dùng shadow chung */
+}
+
+.result-card .card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px; /* Tăng khoảng cách */
+}
+.result-card .card-header h3 {
+  margin-top: 0;
+  margin-bottom: 0;
+  color: var(--header-bg);
+  flex-grow: 1;
+  font-size: 1.15rem; /* Tăng nhẹ cỡ chữ */
+}
+.result-card .bookmark-toggle-btn {
+  background: none;
+  border: 1px solid var(--border-color);
+  padding: 6px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  margin-left: 10px;
+}
+.result-card .bookmark-toggle-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: var(--text-secondary);
+  pointer-events: none;
+}
+.result-card .bookmark-toggle-btn:hover {
+  background-color: var(--primary-bg);
+  border-color: var(--accent-color);
+}
+.result-card .bookmark-toggle-btn.bookmarked svg {
+  fill: #FFC107;
+}
+
+.category-badge {
+  background-color: var(--primary-bg); /* Thay màu */
+  color: var(--text-secondary); /* Thay màu */
+  border: 1px solid var(--border-color); /* Thêm border */
+  padding: 2px 8px; /* Điều chỉnh padding */
+  border-radius: 12px;
+  font-size: 0.75em; /* Giảm cỡ chữ */
+  margin-left: 8px; /* Giảm khoảng cách */
+  font-weight: 500; /* Thêm */
+}
+
+.content-snippet {
+  color: var(--new-text-secondary);
+  font-size: 0.95rem; /* Tăng cỡ chữ */
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-bottom: 15px; /* Thêm khoảng cách dưới */
+}
+.content-snippet p {
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-top: 0;
+  margin-bottom: 0.8rem; /* Giảm nhẹ khoảng cách */
+}
+.content-snippet p:last-child {
+    margin-bottom: 0; /* Xóa margin cho đoạn cuối */
+}
+.content-snippet strong { /* Style cho bold */
+    font-weight: 600;
+    color: var(--text-primary);
+}
+.content-snippet code { /* Style cho code inline */
+    font-family: var(--font-code);
+    background-color: var(--primary-bg);
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-size: 0.88em;
+    border: 1px solid var(--border-color);
+}
+
+
+.tags {
+  margin-top: 15px; /* Tăng khoảng cách */
+  margin-bottom: 10px;
+  border-top: 1px solid var(--border-color); /* Thêm đường kẻ */
+  padding-top: 10px; /* Thêm padding */
+}
+
+.tag {
+  background-color: var(--primary-bg); /* Thay màu */
+  color: var(--text-secondary); /* Thay màu */
+  border: 1px solid var(--border-color); /* Thêm border */
+  padding: 2px 8px; /* Điều chỉnh padding */
+  border-radius: 12px;
+  font-size: 0.8em;
+  margin-right: 6px; /* Tăng nhẹ khoảng cách */
+  display: inline-block;
+  font-weight: 500; /* Thêm */
+}
+
+.tag.cve {
+  background-color: #f8d7da;
+  color: #721c24;
+  border-color: #f5c6cb; /* Thêm border */
+}
+
+/* Giữ nền tối cho code block kể cả light theme */
+/* Style chung cho thẻ <pre> */
+pre {
+  /* Bỏ background/color mặc định ở đây */
+  padding: 12px 15px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-family: var(--font-code); /* Giữ font code chung */
+  font-size: 0.9em;
+  position: relative;
+  white-space: pre-wrap;
+  word-break: break-all;
+  border: 1px solid #444; /* Giữ border tối */
+  margin-top: 10px;    /* Thêm lại margin top/bottom */
+  margin-bottom: 1rem;
+}
+
+/* Style chung cho thẻ <code> bên trong <pre> */
+pre code {
+  font-family: inherit; /* Kế thừa font từ <pre> */
+  display: block; /* Đảm bảo code chiếm đủ không gian */
+  padding: 0; /* Reset padding của code */
+  background: none; /* Bỏ background thừa của code */
+  color: inherit; /* Màu chữ sẽ được định nghĩa theo ngôn ngữ */
+  border: none; /* Bỏ border thừa của code */
+  font-size: inherit; /* Kế thừa cỡ chữ */
+}
+
+/* Style mặc định cho code (nền tối, chữ sáng) - Fallback */
+pre code.language-plaintext,
+pre code:not([class*="language-"]) /* Áp dụng nếu không có class ngôn ngữ */
+{
+  background-color: #282c34 !important; /* Nền tối (Atom One Dark) */
+  color: #abb2bf !important; /* Chữ xám nhạt */
+}
+
+/* Style cho Bash / Shell */
+pre code.language-bash,
+pre code.language-sh {
+  background-color: #1e1e1e !important; /* Nền đen/xám đậm */
+  color: #d4d4d4 !important; /* Chữ trắng xám */
+  /* font-family: 'Courier New', Courier, monospace; */ /* Tùy chọn: Font khác */
+}
+
+/* Style cho PowerShell */
+pre code.language-powershell,
+pre code.language-ps1 {
+  background-color: #012456 !important; /* Nền xanh đậm PowerShell */
+  color: #eeeeee !important; /* Chữ trắng */
+}
+/* Thêm màu vàng cho một số từ khóa PowerShell (ví dụ) */
+/* .language-powershell .token.keyword { color: #ffff00; } */ /* Cần thư viện highlight JS để hoạt động */
+
+/* Style cho Python */
+pre code.language-python,
+pre code.language-py {
+  background-color: #282a36 !important; /* Nền Dracula */
+  color: #f8f8f2 !important; /* Chữ trắng */
+}
+
+/* Style cho SQL */
+pre code.language-sql {
+  background-color: #21252b !important; /* Nền tối */
+  color: #61afef !important; /* Chữ xanh dương nhạt (giống từ khóa SQL) */
+}
+/* Style cho các ngôn ngữ khác (bạn có thể thêm nếu cần) */
+pre code.language-php {
+  background-color: #272822 !important; /* Monokai */
+  color: #f8f8f2 !important;
+}
+pre code.language-javascript,
+pre code.language-js {
+    background-color: #282c34 !important;
+    color: #98c379 !important; /* Màu xanh lá cây */
+}
+pre code.language-c,
+pre code.language-cpp {
+    background-color: #1e1e1e !important;
+    color: #9cdcfe !important; /* Màu xanh dương nhạt */
+}
+/* --- KẾT THÚC THAY ĐỔI CSS CHO KHỐI LỆNH --- */
+
+
+/* Style cho code inline `<code>` (bên ngoài <pre>) */
+/* Giữ style cũ cho code inline */
+.content-snippet code {
+    font-family: var(--font-code);
+    background-color: var(--primary-bg);
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-size: 0.88em;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary); /* Đảm bảo màu chữ phù hợp theme */
+}
+html[data-theme="dark"] .content-snippet code {
+     background-color: var(--new-tag-bg); /* Nền tối hơn cho code inline */
+     color: var(--new-tag-text);
+     border-color: var(--border-color);
+}
+/* Style riêng cho code block trong snippet */
+.content-snippet pre {
+  margin-top: 10px; /* Thêm khoảng cách trên */
+  margin-bottom: 1rem;
+}
+/* Style riêng cho code block trong playbook */
+.playbook-card pre {
+   margin-top: 5px !important;
+   margin-bottom: 10px !important;
+   font-size: 0.88rem;
+}
+
+
+code {
+  font-family: var(--font-code);
+  /* Style cho code inline đã được xử lý trong .content-snippet code */
+}
+
+.source-file {
+  font-size: 0.8em;
+  color: var(--text-secondary); /* Dùng biến màu */
+  margin-top: 15px; /* Tăng khoảng cách */
+  text-align: right;
+  font-style: italic; /* Thêm */
+}
+
+.copy-btn {
+  position: absolute;
+  top: 8px; /* Điều chỉnh vị trí */
+  right: 8px; /* Điều chỉnh vị trí */
+  background-color: #444; /* Đổi màu nền */
+  color: #eee; /* Đổi màu chữ */
+  border: 1px solid #666; /* Thêm border */
+  padding: 3px 8px; /* Tăng padding */
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.75em; /* Giảm cỡ chữ */
+  opacity: 0; /* Ẩn mặc định */
+  transition: opacity 0.2s, background-color 0.2s;
+  z-index: 10;
+}
+
+pre:hover .copy-btn {
+  opacity: 0.7; /* Hiện nhẹ khi hover pre */
+}
+.copy-btn:hover {
+    opacity: 1; /* Hiện rõ khi hover nút */
+    background-color: #555;
+}
+.copy-btn:active {
+  background-color: #333;
+}
+
+
+/* =================================== */
+/* === PHẦN 11: NOTE SAVE STATUS     === */
+/* =================================== */
+
+.note-header {
+  display: flex;
+  align-items: center;
+}
+#note-title {
+  flex-grow: 1;
+  margin-right: 10px;
+}
+#note-save-status {
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--text-secondary);
+  margin-left: auto;
+  margin-right: 10px;
+  transition: opacity 0.3s ease, color 0.3s ease; /* Thêm color transition */
+  opacity: 0;
+}
+#note-save-status.saving {
+  color: var(--accent-color);
+  opacity: 1;
+}
+#note-save-status.saved {
+  color: #22c55e;
+  opacity: 1;
+}
+#note-save-status.error {
+  color: #ef4444;
+   opacity: 1;
+   font-style: normal;
+   font-weight: 500;
+}
+#download-note-btn {
+    margin-left: 0;
+}
+
+/* =================================== */
+/* === PHẦN 12: SỬA KÍCH THƯỚC CODEMIRROR === */
+/* =================================== */
+
+#note-taking-area .main-widget-content {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+  /* Quan trọng: Thêm height để flex-grow hoạt động đúng */
+  /* Cần tính toán dựa trên padding của widget cha và header */
+   height: calc(100% - 40px); /* Giả sử padding top/bottom là 20px */
+   /* Hoặc nếu #note-taking-area có height cố định thì set 100% */
+   height: 100%; /* Thử cách này */
+   padding-bottom: 0; /* Xóa padding bottom để CM chạm đáy */
+}
+
+.CodeMirror {
+  flex-grow: 1; /* Cho phép giãn nở */
+  /* *** THAY ĐỔI: Bỏ height cố định, dùng flex-grow *** */
+  height: auto !important; /* Ghi đè height cũ */
+  /* *** THAY ĐỔI: Thêm max-height hợp lý *** */
+  max-height: 65vh; /* Giới hạn chiều cao tối đa */
+  min-height: 150px;
+  width: 100%;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  margin-top: 10px;
+  position: relative;
+  overflow: hidden; /* Vẫn ẩn overflow của container chính */
+  margin-bottom: 20px; /* Thêm margin bottom */
+}
+
+.CodeMirror-scroll {
+  overflow: auto !important;
+  /* *** THAY ĐỔI: Reset height/min-height *** */
+  height: auto !important; /* Để nó tự tính toán */
+  min-height: 0 !important; /* Reset min-height */
+  position: relative !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+}
+
+.CodeMirror pre.CodeMirror-line,
+.CodeMirror pre.CodeMirror-line-like {
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    background-color: transparent !important;
+    line-height: inherit !important;
+}
+
+/* =================================== */
+/* === PHẦN 13: ẨN TEXTAREA GỐC KHI CM HOẠT ĐỘNG === */
+/* =================================== */
+/* Quan trọng: Chỉ ẩn textarea gốc KHI .CodeMirror thực sự được tạo ra */
+.CodeMirror + textarea#note-content {
+    display: none !important;
+}
+/* Fallback nếu cấu trúc DOM khác */
+#note-taking-area .CodeMirror ~ textarea#note-content {
+     display: none !important;
+}
+/* CSS cho trường hợp CodeMirror lỗi (tùy chọn) */
+#note-taking-area.codemirror-failed .CodeMirror {
+    display: none; /* Ẩn wrapper CM nếu lỗi */
+}
+#note-taking-area.codemirror-failed textarea#note-content {
+    display: block !important; /* Hiện textarea gốc nếu lỗi */
+    /* Thêm style cho textarea gốc nếu cần */
+    width: 100%;
+    min-height: 150px;
+    height: 300px;
+    max-height: 65vh;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: var(--font-code);
+    font-size: 0.95rem;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: var(--secondary-bg);
+    color: var(--text-primary);
+    resize: vertical;
+}
+
+/* === PHẦN BỔ SUNG: CSS CHO PLAYBOOK SEARCH (TỪ LẦN TRƯỚC) === */
+.playbook-search-widget {
+  position: relative;
+}
+#playbook-search-input {
+  width: 100%;
+  padding: 10px 35px 10px 15px; /* Giống #searchInput */
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.95rem; /* Giảm nhẹ */
+  color: var(--text-primary);
+  background-color: var(--secondary-bg); /* Đổi nền giống main search */
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+/* Hover/Focus giống main search */
+#playbook-search-input:focus {
+    border-color: var(--accent-color);
+}
+
+/* Tìm đến .playbook-search-container (CSS mới) và cập nhật nút clear */
+.search-container.playbook-search-container {
+    position: relative; /* Cho phép định vị nút clear */
+}
+.playbook-search-container .clear-button {
+    position: absolute; /* Đặt nút clear bên trong input */
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 0; /* Xóa margin cũ */
+    padding: 5px; /* Giảm padding */
+    background: none; /* Bỏ background */
+    border-radius: 0;
+}
+.playbook-search-container .clear-button:hover {
+     background: none; /* Bỏ background hover */
+     color: var(--text-primary); /* Đổi màu chữ khi hover */
+}
+#playbook-suggestion-box {
+  background-color: var(--secondary-bg);
+  border: 1px solid var(--border-color);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  position: absolute;
+  /* Quan trọng: Định vị tương đối với widget thay vì container input */
+  top: calc(100% + 5px); /* Đặt ngay dưới input container */
+  left: 0; /* Căn trái với widget */
+  width: 100%; /* Chiếm hết chiều rộng widget */
+  z-index: 100;
+  max-height: 250px;
+  overflow-y: auto;
+  box-shadow: var(--shadow);
+  /* Điều chỉnh lại width trong playbook-search-widget */
+  width: calc(100% - 30px); /* (Widget padding 15px*2) */
+  left: 15px; /* Căn lề theo padding widget */
+}
+.suggestion-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--border-color);
+}
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+.suggestion-item:hover {
+  background-color: var(--primary-bg);
+}
+.suggestion-item mark {
+  font-weight: 600;
+  background-color: transparent;
+  color: var(--header-bg);
+  text-decoration: none;
+}
+#playbook-selected-tags {
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 0; /* Bỏ margin top vì input đã có margin bottom */
+  padding: 12px;
+  border: 1px dashed var(--border-color);
+  border-radius: 8px;
+  min-height: 50px;
+  align-content: flex-start;
+  margin-bottom: 15px; /* Thêm khoảng cách dưới */
+}
+
+/* Căn giữa message khi không có tag */
+.no-tags-msg {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  width: 100%; /* Chiếm đủ rộng */
+  text-align: center; /* Căn giữa */
+  align-self: center; /* Căn giữa theo chiều dọc (nếu flex container) */
+  padding: 10px 0; /* Thêm padding dọc */
+}
+.tag-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--header-bg);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.remove-tag-btn {
+  background: none;
+  border: none;
+  color: white;
+  opacity: 0.7;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+}
+.remove-tag-btn:hover {
+  opacity: 1;
+}
+.no-tags-msg {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+#playbook-results {
+  flex-grow: 1; /* Quan trọng: Cho phép co giãn */
+  overflow-y: auto; /* Quan trọng: Cho phép cuộn */
+  margin-top: 0; /* Xóa margin top cũ */
+  padding-top: 15px; /* Thêm padding top */
+  border-top: 1px solid var(--border-color); /* Giữ đường kẻ trên */
+  /* Đảm bảo có padding dưới để không bị sát đáy */
+  padding-bottom: 15px;
+}
+/* =================================== */
+/* === PHẦN 14: NÚT CLEAR & COPY    === */
+/* =================================== */
+
+/* Style chung cho container chứa input và nút clear */
+.search-container {
+  position: relative; /* Để định vị nút clear */
+  display: flex; /* Sắp xếp input và nút (cho playbook search) */
+  align-items: center;
+}
+
+/* Điều chỉnh padding cho input để có chỗ cho nút clear bên trong */
+.main-search-container input#searchInput {
+  padding-right: 35px; /* Thêm padding bên phải */
+}
+/* Input playbook không cần padding vì nút ở ngoài */
+
+/* Style cho nút Clear (X) */
+.clear-button {
+  position: absolute; /* Định vị bên trong input (main search) */
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  opacity: 0.7;
+  display: flex; /* Giúp căn giữa SVG */
+  align-items: center;
+  justify-content: center;
+}
+.clear-button:hover {
+  opacity: 1;
+  color: var(--text-primary);
+}
+.clear-button svg {
+    pointer-events: none; /* Đảm bảo click vào nút chứ không phải SVG */
+}
+
+/* Riêng cho nút clear playbook (nằm ngoài input) */
+.playbook-search-container .clear-button {
+    position: static; /* Bỏ absolute */
+    transform: none; /* Bỏ transform */
+    margin-left: 8px; /* Thêm khoảng cách */
+    padding: 8px; /* Tăng padding để dễ click hơn */
+    background-color: var(--primary-bg); /* Thêm nền nhẹ */
+    border-radius: 50%;
+}
+.playbook-search-container .clear-button:hover {
+    background-color: var(--border-color);
+}
+
+
+/* Style cho wrapper chứa IP Kali và nút copy */
+.kali-ip-display-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px; /* Điều chỉnh padding */
+    border-radius: 6px;
+    background-color: var(--primary-bg);
+    border: 1px solid var(--border-color);
+    min-height: 40px; /* Đảm bảo chiều cao tối thiểu */
+}
+
+/* Tìm đến #my-kali-ip-display (khoảng dòng 1052) và cập nhật */
+#my-kali-ip-display {
+    flex-grow: 1;
+    font-family: var(--font-code);
+    font-size: 0.9rem;
+    font-weight: 500; /* Giảm nhẹ độ đậm */
+    color: var(--text-secondary); /* Màu mặc định khi chưa có IP */
+    word-break: break-all;
+    display: block;
+    padding: 0;
+    border: none;
+    background: none;
+    line-height: 1.4; /* Thêm line-height */
+}
+/* Style khi có IP */
+#my-kali-ip-display:not(:empty) {
+    color: var(--accent-color);
+    font-weight: 600;
+}
+/* Style khi lỗi */
+#my-kali-ip-display[style*="color: red"] {
+    font-weight: 500;
+}
+/* Style khi cảnh báo */
+#my-kali-ip-display[style*="color: orange"] {
+     font-weight: 500;
+}
+
+/* Style chung cho nút icon */
+.icon-button {
+    background: none;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.2s, color 0.2s;
+}
+.icon-button:hover {
+    background-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+/* Style riêng cho nút copy IP */
+.copy-ip-button {
+    flex-shrink: 0;
+    padding: 4px; /* Giảm padding nút copy */
+}
+.copy-ip-button.copied svg {
+    fill: #22c55e; /* Đổi màu icon thành xanh lá khi đã copy */
+}
+.playbook-assumption {
+    font-size: 0.88rem;
+    font-style: italic;
+    color: var(--text-secondary);
+    margin-bottom: 15px; /* Khoảng cách dưới assumption */
+    padding-left: 5px; /* Thụt lề nhẹ */
+    border-left: 2px solid var(--border-color); /* Đường kẻ bên trái */
+}
+.playbook-assumption strong {
+    font-style: normal; /* Bỏ italic cho chữ "Assumption:" */
+    color: var(--text-primary);
+}
+
+
+.playbook-content-formatted {
+    font-size: 0.9rem; /* Điều chỉnh cỡ chữ cho content */
+    margin-bottom: 15px; /* Khoảng cách dưới content */
+    border-left: 2px solid var(--border-color); /* Giữ đường kẻ trái */
+    padding-left: 10px; /* Thêm padding trái */
+    color: var(--text-secondary); /* Màu chữ mặc định */
+}
+
+.playbook-content-formatted h5 {
+    font-size: 1rem; /* Cỡ chữ cho tiêu đề con */
+    font-weight: 600;
+    color: var(--text-primary); /* Màu chữ đậm hơn */
+    margin-top: 12px;
+    margin-bottom: 8px;
+}
+
+.playbook-content-formatted ul,
+.playbook-content-formatted ol {
+    padding-left: 20px; /* Thụt lề cho list */
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.playbook-content-formatted li {
+    margin-bottom: 4px; /* Khoảng cách giữa các mục list */
+}
+
+.playbook-content-formatted p {
+    margin-bottom: 8px; /* Khoảng cách giữa các đoạn văn */
+    line-height: 1.5;
+}
+
+/* Style cho code inline trong content (khác với code block trong <pre>) */
+.playbook-content-formatted code {
+    font-family: var(--font-code);
+    background-color: var(--primary-bg); /* Nền nhạt hơn */
+    color: var(--text-primary);
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-size: 0.85em; /* Cỡ chữ nhỏ hơn chút */
+    border: 1px solid var(--border-color);
+}
+
+html[data-theme="dark"] .playbook-content-formatted code {
+     background-color: #374151; /* Nền tối hơn */
+     border-color: #4b5563;
+     color: var(--new-tag-text);
+}
+
+/* Bỏ margin mặc định của trình duyệt cho h5, p trong context này nếu cần */
+.playbook-content-formatted h5:first-child,
+.playbook-content-formatted p:first-child {
+    margin-top: 0;
+}
+.playbook-content-formatted p:last-child {
+    margin-bottom: 0;
+}
+/* style.css */
+
+/* ... (CSS hiện có) ... */
+
+/* === PHẦN 15: ĐỒNG BỘ STYLE LIST CHO RESULT CARD === */
+
+.result-card .content-snippet ul,
+.result-card .content-snippet ol {
+  padding-left: 25px; /* Giống playbook */
+  margin-top: 5px;
+  margin-bottom: 1rem; /* Khoảng cách dưới list */
+}
+
+.result-card .content-snippet li {
+  margin-bottom: 8px; /* Khoảng cách giữa các mục list */
+  line-height: 1.5;
+}
+
+.result-card .content-snippet li p {
+    margin-bottom: 5px; /* Giảm khoảng cách nếu có <p> trong <li> */
+}
+
+/* Đảm bảo code inline trong list cũng có style */
+.result-card .content-snippet li code {
+    font-family: var(--font-code);
+    background-color: var(--primary-bg);
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-size: 0.88em;
+    border: 1px solid var(--border-color);
+}
+/* =================================== */
+/* === PHẦN 16: STYLE CODE BLOCK TERMINAL === */
+/* =================================== */
+
+/* Style chung cho code block (giữ nền tối) */
+pre {
+  background-color: #2d2d2d !important; /* Luôn dùng nền tối */
+  color: #ccc !important; /* Luôn dùng chữ sáng */
+  padding: 12px 15px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-family: var(--font-code);
+  font-size: 0.9em;
+  position: relative;
+  white-space: pre-wrap;
+  word-break: break-all;
+  border: 1px solid #444; /* Border tối */
+  margin-top: 10px; /* Thêm khoảng cách trên */
+  margin-bottom: 1rem; /* Khoảng cách dưới */
+}
+
+/* Thêm pseudo-element ::before để giả lập prompt */
+pre code[class*="language-"]::before {
+  /* display: block; */
+  margin-bottom: 8px; /* Khoảng cách giữa prompt và code */
+  font-weight: bold;
+  font-size: 0.85em;
+  opacity: 0.7;
+}
+
+/* Style cho Bash ($) */
+pre code.language-bash::before {
+  content: "$ "; /* Dấu nhắc Bash */
+  color: #8ae234; /* Màu xanh lá cây */
+}
+
+/* Style cho PowerShell (PS >) */
+pre code.language-powershell::before {
+  content: "PS >"; /* Dấu nhắc PowerShell */
+  color: #729fcf; /* Màu xanh dương nhạt */
+}
+/* Style cho SQL */
+pre code.language-sql::before {
+  content: "SQL> "; /* Dấu nhắc SQL (ví dụ) */
+  color: #fcaf3e; /* Màu cam */
+}
+
+/* Style cho Python (>>>) */
+pre code.language-python::before {
+  content: ">>> "; /* Dấu nhắc Python */
+  color: #ad7fa8; /* Màu tím */
+}
+
+/* Style cho các ngôn ngữ khác (có thể thêm nếu cần) */
+pre code.language-plaintext::before,
+pre code:not([class*="language-"])::before { /* Code không có class ngôn ngữ */
+  content: "> "; /* Dấu nhắc chung */
+  color: #ccc;
+}
+
+/* Điều chỉnh vị trí nút copy để không bị prompt che */
+.copy-btn {
+  top: 8px;
+  right: 8px;
+  z-index: 11; /* Đảm bảo nút copy nổi trên prompt */
+}
+
+/* Thêm padding top cho code để không bị prompt đè lên dòng đầu */
+pre code[class*="language-"] {
+    display: block; /* Cần thiết để padding hoạt động */
+    padding-top: 5px; /* Thêm khoảng trống phía trên code */
+}
+
+/* Style cho code inline (không có prompt) */
+.content-snippet code {
+    font-family: var(--font-code);
+    background-color: var(--primary-bg);
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-size: 0.88em;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary); /* Màu chữ theo theme */
+}
+html[data-theme="dark"] .content-snippet code {
+     color: var(--text-primary); /* Đảm bảo màu chữ đúng trong theme tối */
+     background-color: #374151; /* Nền tối hơn */
+     border-color: #4b5563;
+}
+.ip-input-field {
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background-color: var(--primary-bg);
+    color: var(--text-primary);
+    font-family: var(--font-code);
+    font-size: 0.9rem;
+    margin-top: 5px; /* Thêm khoảng cách nhỏ */
+}
